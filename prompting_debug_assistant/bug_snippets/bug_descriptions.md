@@ -2,6 +2,14 @@
 
 This document describes the intended behavior and known issues for each buggy code snippet in the bug_snippets directory. Snippets are written in Python, JavaScript, and C, and cover a range of common programming errors.
 
+## Table of Contents
+- [Bug 1 – bug1.py](#bug-1--bug1py)
+- [Bug 2 – bug2.py](#bug-2--bug2py)
+- [Bug 3 – bug3.js](#bug-3--bug3js)
+- [Bug 4 – bug4.js](#bug-4--bug4js)
+- [Bug 5 – bug5.py](#bug-5--bug5py)
+- [Bug 6 – bug6.c](#bug-6--bug6c)
+
 ## Bug 1 – bug1.py
 **Intended Behavior**: Return the last n items of a list.
 **Issue Type**: Off-by-one error.
