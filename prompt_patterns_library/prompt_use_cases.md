@@ -6,101 +6,127 @@ Prompt patterns are structured approaches for requesting AI assistance in coding
 
 ## Code Quality
 
-### Refactoring
-- **Goal**: Improve readability and performance
-- **Input**: Source function in [LANGUAGE]
-- **Output**: Optimized code + explanation of improvements
-- **Example**: "Refactor this Python function to be more Pythonic and reduce time complexity."
+- **Refactoring**
+  - **Goal**: Improve readability and performance
+  - **Input**: Source function in [LANGUAGE]
+  - **Output**: Optimized code + explanation of improvements
+  - **Example**: "Refactor this Python function to be more Pythonic and reduce time complexity."
 
-### Style Enforcement
-- **Goal**: Enforce consistent naming and formatting standards
-- **Input**: Code block with inconsistent style
-- **Output**: Rewritten code following style guide
-- **Example**: "Reformat this JavaScript code to follow Airbnb style guide."
+- **Style Enforcement**
+  - **Goal**: Enforce consistent naming and formatting standards
+  - **Input**: Code block with inconsistent style
+  - **Output**: Rewritten code following style guide
+  - **Example**: "Reformat this JavaScript code to follow Airbnb style guide."
 
-### Code Simplification
-- **Goal**: Reduce complexity and improve maintainability
-- **Input**: Complex nested logic or redundant code
-- **Output**: Simplified equivalent code
-- **Example**: "Simplify this nested if-else statement into a switch or ternary operator."
+- **Code Simplification**
+  - **Goal**: Reduce complexity and improve maintainability
+  - **Input**: Complex nested logic or redundant code
+  - **Output**: Simplified equivalent code
+  - **Example**: "Simplify this nested if-else statement into a switch or ternary operator."
+
+- **Dead Code Removal**
+  - **Goal**: Identify and remove unused code
+  - **Input**: Code with potential dead code
+  - **Output**: Cleaned code with explanation of removed sections
+  - **Example**: "Identify and remove all unused variables and functions from this module."
 
 ---
 
 ## Debugging
 
-### Error Diagnosis
-- **Goal**: Identify root cause of runtime or logic errors
-- **Input**: Error message + code snippet
-- **Output**: Root cause analysis + suggested fixes
-- **Example**: "This code throws IndexError: list index out of range. Can you identify the issue?"
+- **Error Diagnosis**
+  - **Goal**: Identify root cause of runtime or logic errors
+  - **Input**: Error message + code snippet
+  - **Output**: Root cause analysis + suggested fixes
+  - **Example**: "This code throws IndexError: list index out of range. Can you identify the issue?"
 
-### Logic Verification
-- **Goal**: Trace through code logic to find bugs
-- **Input**: Code and expected vs actual output
-- **Output**: Step-by-step trace + bug identification
-- **Example**: "Expected [30,40,50] but got IndexError. Walk through this loop logic."
+- **Logic Verification**
+  - **Goal**: Trace through code logic to find bugs
+  - **Input**: Code and expected vs actual output
+  - **Output**: Step-by-step trace + bug identification
+  - **Example**: "Expected [30,40,50] but got IndexError. Walk through this loop logic."
 
-### Performance Optimization
-- **Goal**: Find and fix performance bottlenecks
-- **Input**: Code that runs slowly
-- **Output**: Identified bottlenecks + optimization suggestions
-- **Example**: "Why is this O(n²) algorithm slow for large datasets? Suggest an O(n) alternative."
+- **Performance Optimization**
+  - **Goal**: Find and fix performance bottlenecks
+  - **Input**: Code that runs slowly
+  - **Output**: Identified bottlenecks + optimization suggestions
+  - **Example**: "Why is this O(n²) algorithm slow for large datasets? Suggest an O(n) alternative."
+
+- **Type Safety Debugging**
+  - **Goal**: Identify type-related runtime errors
+  - **Input**: Code with type mismatches or missing type hints
+  - **Output**: Root cause + type-safe solution
+  - **Example**: "This function passes strings to int(). How should we validate input types?"
 
 ---
 
 ## Documentation
 
-### Code Comments and Docstrings
-- **Goal**: Add clear comments explaining code logic
-- **Input**: Code without comments
-- **Output**: Same code with helpful comments and docstrings
-- **Example**: "Add docstrings and inline comments to this Python function."
+- **Code Comments and Docstrings**
+  - **Goal**: Add clear comments explaining code logic
+  - **Input**: Code without comments
+  - **Output**: Same code with helpful comments and docstrings
+  - **Example**: "Add docstrings and inline comments to this Python function."
 
-### README and API Documentation
-- **Goal**: Create user-friendly documentation
-- **Input**: Code or project overview
-- **Output**: Formatted documentation with examples
-- **Example**: "Write a comprehensive README for this GitHub repository including setup and usage."
+- **README and API Documentation**
+  - **Goal**: Create user-friendly documentation
+  - **Input**: Code or project overview
+  - **Output**: Formatted documentation with examples
+  - **Example**: "Write a comprehensive README for this GitHub repository including setup and usage."
 
-### Technical Specification Writing
-- **Goal**: Document system design and architecture
-- **Input**: Project description or code structure
-- **Output**: Formal technical specification document
-- **Example**: "Create a technical specification document for this database schema."
+- **Technical Specification Writing**
+  - **Goal**: Document system design and architecture
+  - **Input**: Project description or code structure
+  - **Output**: Formal technical specification document
+  - **Example**: "Create a technical specification document for this database schema."
+
+- **Change Log and Release Notes**
+  - **Goal**: Document changes and improvements
+  - **Input**: Git commits or version history
+  - **Output**: Formatted changelog with categorized entries
+  - **Example**: "Generate release notes for version 2.0 based on these commits."
 
 ---
 
 ## Testing
 
-### Test Case Generation
-- **Goal**: Create comprehensive test cases covering edge cases
-- **Input**: Function signature and intended behavior
-- **Output**: Unit tests with various scenarios
-- **Example**: "Generate pytest test cases for this function, including edge cases and error conditions."
+- **Test Case Generation**
+  - **Goal**: Create comprehensive test cases covering edge cases
+  - **Input**: Function signature and intended behavior
+  - **Output**: Unit tests with various scenarios
+  - **Example**: "Generate pytest test cases for this function, including edge cases and error conditions."
 
-### Test Validation and Coverage
-- **Goal**: Verify tests cover intended functionality
-- **Input**: Code and existing test suite
-- **Output**: Analysis of coverage gaps + new test cases
-- **Example**: "Are these tests sufficient? What edge cases are missing?"
+- **Test Validation and Coverage**
+  - **Goal**: Verify tests cover intended functionality
+  - **Input**: Code and existing test suite
+  - **Output**: Analysis of coverage gaps + new test cases
+  - **Example**: "Are these tests sufficient? What edge cases are missing?"
 
-### Mock and Fixture Creation
-- **Goal**: Create test doubles and test data
-- **Input**: Function that requires external dependencies
-- **Output**: Mocks, stubs, and fixtures
-- **Example**: "Create mock objects and fixtures for testing this API client."
+- **Mock and Fixture Creation**
+  - **Goal**: Create test doubles and test data
+  - **Input**: Function that requires external dependencies
+  - **Output**: Mocks, stubs, and fixtures
+  - **Example**: "Create mock objects and fixtures for testing this API client."
+
+- **Integration Test Planning**
+  - **Goal**: Design tests for component interactions
+  - **Input**: System architecture description
+  - **Output**: Integration test scenarios and test cases
+  - **Example**: "Create integration tests for this microservices architecture."
 
 ---
 
 ## Summary
 
-Total categories: **4**
-Total use cases: **11**
+**Total Categories**: 4
+**Total Use Cases**: 16
 
-| Category | Count |
-|----------|-------|
-| Code Quality | 3 |
-| Debugging | 3 |
-| Documentation | 3 |
-| Testing | 3 |
-| **Total** | **12** |
+| Category | Use Cases |
+|----------|-----------|
+| Code Quality | 4 |
+| Debugging | 4 |
+| Documentation | 4 |
+| Testing | 4 |
+| **Total** | **16** |
+
+Each use case provides a structured approach for requesting specific AI assistance in coding workflows.
