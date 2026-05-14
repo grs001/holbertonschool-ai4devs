@@ -1,0 +1,46 @@
+graph TB
+    Client1[Mobile App]
+    Client2[Web Dashboard]
+    
+    Client1 --> Gateway[API Gateway<br/>Request Router]
+    Client2 --> Gateway
+    
+    Gateway --> Auth[Auth Service<br/>Port 3001]
+    Gateway --> User[User Service<br/>Port 3002]
+    Gateway --> Ride[Ride Service<br/>Port 3003]
+    Gateway --> Match[Matching Service<br/>Port 3004]
+    Gateway --> Payment[Payment Service<br/>Port 3005]
+    Gateway --> Notif[Notification Service<br/>Port 3006]
+    Gateway --> Chat[Chat Service<br/>Port 3007]
+    Gateway --> Rating[Rating Service<br/>Port 3008]
+    
+    Auth --> AuthDB[(Auth DB<br/>PostgreSQL)]
+    User --> UserDB[(User DB<br/>PostgreSQL)]
+    Ride --> RideDB[(Ride DB<br/>PostgreSQL)]
+    Match --> MatchCache[(Redis Cache<br/>Real-time)]
+    Payment --> PaymentDB[(Payment DB<br/>PostgreSQL)]
+    Notif --> Queue[Message Queue<br/>RabbitMQ]
+    Chat --> ChatDB[(Chat DB<br/>MongoDB)]
+    Rating --> RatingDB[(Rating DB<br/>PostgreSQL)]
+    
+    Match --> LocationAPI[Location Service<br/>Google Maps]
+    Payment --> PaymentGW[Payment Gateway<br/>Stripe API]
+    Notif --> Firebase[Firebase Cloud<br/>Messaging]
+    Chat --> WebSocket[WebSocket Server<br/>Real-time]
+    
+    ServiceRegistry[Service Registry<br/>Consul/Eureka]
+    Auth -.-> ServiceRegistry
+    User -.-> ServiceRegistry
+    Ride -.-> ServiceRegistry
+    Match -.-> ServiceRegistry
+    Payment -.-> ServiceRegistry
+    Notif -.-> ServiceRegistry
+    Chat -.-> ServiceRegistry
+    Rating -.-> ServiceRegistry
+    
+    Monitoring[Monitoring & Logging<br/>Prometheus/ELK]
+    Auth -.-> Monitoring
+    User -.-> Monitoring
+    Ride -.-> Monitoring
+    Match -.-> Monitoring
+    Payment -.-> Monitoring
