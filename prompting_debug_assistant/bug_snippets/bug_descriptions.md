@@ -1,33 +1,63 @@
 # Bug Descriptions
 
-This document describes the intended behavior and known issues for each buggy code snippet in the bug_snippets directory. Snippets are written in Python, JavaScript, and C, and cover a range of common programming errors.
+Overview: This document lists buggy code snippets in Python, JavaScript, and C, describing the intended behavior, issue type, and notes for each.
+
+---
 
 ## Bug 1 – bug1.py
-**Intended Behavior**: Return the last n items of a list.
-**Issue Type**: Off-by-one error.
-**Notes**: The function fails when n == len(items) because the loop range exceeds the list boundary, raising an IndexError.
+### Intended Behavior
+Return the last n items of a list. For example, last_n_items([10,20,30,40,50], 3) should return [30, 40, 50].
+### Issue Type
+Off-by-one error.
+### Notes
+The loop uses range(len(items) - n, len(items) + 1) which goes one step too far. When n == len(items), it accesses an index that does not exist, raising an IndexError.
+
+---
 
 ## Bug 2 – bug2.py
-**Intended Behavior**: Return True if a string is a palindrome, ignoring spaces and case.
-**Issue Type**: Logical error.
-**Notes**: The function fails on mixed-case inputs because it never lowercases the string before comparing characters.
+### Intended Behavior
+Return True if a string is a palindrome, ignoring spaces and letter case. For example, is_palindrome("A man a plan a canal Panama") should return True.
+### Issue Type
+Logical error.
+### Notes
+The function strips spaces but never calls .lower(). So 'A' and 'a' are treated as different characters, causing valid mixed-case palindromes to incorrectly return False.
+
+---
 
 ## Bug 3 – bug3.js
-**Intended Behavior**: Return the average of a number array formatted as a percentage string.
-**Issue Type**: Runtime error.
-**Notes**: The loop runs one index too far, accessing undefined, which causes NaN to propagate into the result.
+### Intended Behavior
+Calculate the average of a number array and return a formatted string like "Average score: 86.60%". An empty array should return "Average score: 0.00%".
+### Issue Type
+Runtime error.
+### Notes
+The loop condition is i <= numbers.length instead of i < numbers.length. The last iteration reads numbers[numbers.length] which is undefined. This corrupts the total with NaN, producing a wrong result.
+
+---
 
 ## Bug 4 – bug4.js
-**Intended Behavior**: Return a list of all duplicate values found in an array.
-**Issue Type**: Syntax error.
-**Notes**: The for loop is missing a semicolon before the increment, causing a SyntaxError that prevents execution.
+### Intended Behavior
+Return a unique list of all values that appear more than once in an array. For example, [1,2,3,2,4,3,5,1] should return [2, 3, 1].
+### Issue Type
+Syntax error.
+### Notes
+The for loop is written as i < arr.length i++ with no semicolon between them. This is invalid JavaScript syntax and throws a SyntaxError, preventing the script from running at all.
+
+---
 
 ## Bug 5 – bug5.py
-**Intended Behavior**: Compute and print mean, median, and standard deviation from a list of numeric strings.
-**Issue Type**: Misuse of data types.
-**Notes**: The function passes raw strings to statistics functions which require numeric types, raising a TypeError.
+### Intended Behavior
+Accept a list of numeric strings, then compute and print the mean, median, and standard deviation formatted to two decimal places.
+### Issue Type
+Misuse of data types.
+### Notes
+The statistics functions require int or float values. The input list contains strings like "12" and "45". Passing them directly raises a TypeError. Values must be converted with int() or float() first.
+
+---
 
 ## Bug 6 – bug6.c
-**Intended Behavior**: Compute the factorial of a given integer using an iterative loop.
-**Issue Type**: Logical error.
-**Notes**: The loop condition uses i < n instead of i <= n, so the function skips multiplying by n and returns a wrong result.
+### Intended Behavior
+Compute the factorial of a positive integer iteratively. For example, factorial(5) should return 120 and factorial(1) should return 1.
+### Issue Type
+Logical error (wrong loop boundary).
+### Notes
+The loop condition is while (i < n) instead of while (i <= n). The loop exits before multiplying by n, so factorial(5) returns 24 instead of 120.
