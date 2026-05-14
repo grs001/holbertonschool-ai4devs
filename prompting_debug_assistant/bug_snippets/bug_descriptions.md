@@ -56,8 +56,8 @@ The statistics functions require int or float values. The input list contains st
 
 ## Bug 6 – bug6.c
 ### Intended Behavior
-Compute the factorial of a positive integer iteratively. For example, factorial(5) should return 120 and factorial(1) should return 1.
+Compute the factorial of a positive integer iteratively and print a multiplication table. For example, factorial(5) should return 120, factorial(1) should return 1, and print_table(3) should print a correct 3x3 multiplication grid.
 ### Issue Type
 Logical error (wrong loop boundary).
 ### Notes
-The loop condition is while (i < n) instead of while (i <= n). The loop exits before multiplying by n, so factorial(5) returns 24 instead of 120.
+The loop condition is while (i < n) instead of while (i <= n). The loop exits before multiplying by n itself, so factorial(5) returns 24 (equal to 4!) instead of the correct value 120. The print_table function is correct and unaffected by this bug.
