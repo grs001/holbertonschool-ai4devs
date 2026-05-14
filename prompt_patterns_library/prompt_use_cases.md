@@ -18,6 +18,12 @@ Prompt patterns are structured approaches for requesting AI assistance in coding
 - **Output**: Rewritten code following style guide
 - **Example**: "Reformat this JavaScript code to follow Airbnb style guide."
 
+### Code Simplification
+- **Goal**: Reduce complexity and improve maintainability
+- **Input**: Complex nested logic or redundant code
+- **Output**: Simplified equivalent code
+- **Example**: "Simplify this nested if-else statement into a switch or ternary operator."
+
 ---
 
 ## Debugging
@@ -56,6 +62,12 @@ Prompt patterns are structured approaches for requesting AI assistance in coding
 - **Output**: Formatted documentation with examples
 - **Example**: "Write a comprehensive README for this GitHub repository including setup and usage."
 
+### Technical Specification Writing
+- **Goal**: Document system design and architecture
+- **Input**: Project description or code structure
+- **Output**: Formal technical specification document
+- **Example**: "Create a technical specification document for this database schema."
+
 ---
 
 ## Testing
@@ -87,8 +99,8 @@ Total use cases: **11**
 
 | Category | Count |
 |----------|-------|
-| Code Quality | 2 |
+| Code Quality | 3 |
 | Debugging | 3 |
-| Documentation | 2 |
+| Documentation | 3 |
 | Testing | 3 |
-| **Total** | **10** |
+| **Total** | **12** |
