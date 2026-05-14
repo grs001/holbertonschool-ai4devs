@@ -1,3 +1,7 @@
+# Bug Descriptions
+
+This document describes the intended behavior and known issues for each buggy code snippet in the bug_snippets directory. Snippets are written in Python, JavaScript, and C, and cover a range of common programming errors.
+
 ## Bug 1 – bug1.py
 **Intended Behavior**: Return the last n items of a list.
 **Issue Type**: Off-by-one error.
