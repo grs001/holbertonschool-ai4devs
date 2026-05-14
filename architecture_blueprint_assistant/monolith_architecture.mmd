@@ -1,0 +1,29 @@
+graph TD
+    A[Mobile App<br/>iOS/Android] --> B[Web Interface<br/>Dashboard]
+    A --> C[API Gateway<br/>Request Router]
+    B --> C
+    
+    C --> D[Monolithic Backend Server]
+    
+    D --> E[Authentication Module<br/>Login, JWT, Sessions]
+    D --> F[User Management Module<br/>Profile, Preferences]
+    D --> G[Ride Matching Engine<br/>AI Algorithm, Pairing]
+    D --> H[Payments Module<br/>Transactions, Billing]
+    D --> I[Notification Service<br/>Push, SMS, Email]
+    D --> J[Chat Service<br/>Real-time Messaging]
+    D --> K[Ratings & Reviews Module<br/>Scoring, Verification]
+    D --> L[Eco-Impact Tracker<br/>CO2 Calculations]
+    
+    D --> M[(Database<br/>PostgreSQL)]
+    D --> N[Cache Layer<br/>Redis]
+    D --> O[File Storage<br/>AWS S3]
+    
+    D --> P[Location Service<br/>GPS, Maps API]
+    D --> Q[Payment Gateway<br/>Stripe/PayPal]
+    
+    M --> R[User Data]
+    M --> S[Trip History]
+    M --> T[Ratings Data]
+    
+    N --> U[Session Cache]
+    N --> V[Real-time Data]
