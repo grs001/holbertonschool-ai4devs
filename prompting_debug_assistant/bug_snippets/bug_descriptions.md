@@ -36,11 +36,15 @@ The loop condition is i <= numbers.length instead of i < numbers.length. The las
 
 ## Bug 4 – bug4.js
 ### Intended Behavior
-Return a unique list of all values that appear more than once in an array. For example, [1,2,3,2,4,3,5,1] should return [2, 3, 1].
+Return a unique list of all values that appear more than once in an array. For example, findDuplicates([1,2,3,2,4,3,5,1]) should return [2, 3, 1].
 ### Issue Type
 Syntax error.
+### Steps to Reproduce
+1. Save the file as bug4.js.
+2. Run it with: node bug4.js
+3. Observe that Node.js throws a SyntaxError before executing any code.
 ### Notes
-The for loop is written as i < arr.length i++ with no semicolon between them. This is invalid JavaScript syntax and throws a SyntaxError, preventing the script from running at all.
+The for loop is written as i < arr.length i++ with no semicolon between them. This is invalid JavaScript syntax and throws a SyntaxError at parse time, preventing the script from running at all.
 
 ---
 
