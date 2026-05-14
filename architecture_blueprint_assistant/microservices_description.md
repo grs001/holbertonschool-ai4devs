@@ -1,160 +1,128 @@
 # Microservices Architecture – Carpool Connect
 
 ## Overview
-A microservices architecture where Carpool Connect is decomposed into independent, loosely-coupled services. Each service has its own database, specific responsibility, and can be developed, deployed, and scaled independently.
+A microservices architecture decomposing Carpool Connect into 7 independent, loosely-coupled services. Each service has distinct responsibility, owns its database, and can be scaled independently.
 
-## Core Microservices
+## Core Microservices (7 Distinct Services)
 
 ### 1. Auth Service (Port 3001)
-- **Purpose**: Centralized authentication and authorization management.
-- **Responsibility**: User login/logout, JWT token generation, OAuth2 integration, multi-factor authentication, session validation.
-- **Database**: PostgreSQL (Auth DB) – stores credentials and auth tokens.
+- **Purpose**: Centralized authentication and authorization.
+- **Responsibility**: User login/logout, JWT generation, OAuth2 integration, session validation, MFA.
+- **Database**: PostgreSQL – credentials, tokens, session data.
 - **API Endpoints**: POST /auth/login, POST /auth/register, POST /auth/refresh, POST /auth/logout.
-- **Communication**: Synchronous REST calls; validates tokens for all other services.
+- **Communication**: REST API; validates all requests across system.
+- **Why Separate**: Security isolation. Critical for entire system. Can scale independently during high auth traffic.
 - **Technology**: Node.js/Express, JWT, bcrypt, Passport.js.
 
 ### 2. User Service (Port 3002)
-- **Purpose**: Manages user profiles, preferences, and account settings.
-- **Responsibility**: User profile CRUD, preference storage, account deactivation, user search, profile updates.
-- **Database**: PostgreSQL (User DB) – stores user information, preferences, settings.
+- **Purpose**: User profile and preference management.
+- **Responsibility**: Profile CRUD, preference storage, account deactivation, user search.
+- **Database**: PostgreSQL – user profiles, settings, preferences.
 - **API Endpoints**: GET/POST/PUT /users, GET /users/:id, PUT /users/:id/preferences.
 - **Communication**: REST API; called by other services for user data.
+- **Why Separate**: User data is accessed by multiple services. Independent updates don't affect ride/payment operations.
 - **Technology**: Node.js/Express, PostgreSQL, Caching.
 
 ### 3. Ride Service (Port 3003)
-- **Purpose**: Core ride management – creation, listing, booking, scheduling.
-- **Responsibility**: Ride creation, ride search by criteria, ride cancellation, recurring ride management, ride status tracking.
-- **Database**: PostgreSQL (Ride DB) – stores ride postings, bookings, schedules.
+- **Purpose**: Core ride management and lifecycle.
+- **Responsibility**: Create rides, search rides, booking, cancellation, recurring schedules, ride status.
+- **Database**: PostgreSQL – ride postings, bookings, schedules, ride history.
 - **API Endpoints**: POST /rides, GET /rides/search, GET /rides/:id, POST /rides/:id/book, PUT /rides/:id/cancel.
-- **Communication**: REST API; consumes Matching Service for pairing; publishes events for Notification Service.
-- **Technology**: Node.js/Express, PostgreSQL, Event-driven messaging.
-- **External Calls**: Matching Service for ride assignment; Notification Service via message queue.
+- **Communication**: REST API; publishes events (ride_created, ride_booked) to message queue.
+- **Why Separate**: Core business logic. High traffic service. Needs independent scaling during peak hours.
+- **Technology**: Node.js/Express, PostgreSQL, Event streaming.
 
 ### 4. Matching Service (Port 3004)
-- **Purpose**: AI-powered ride matching algorithm and optimization.
-- **Responsibility**: Driver-passenger matching, route optimization, availability verification, pricing calculation, match scoring.
-- **Cache**: Redis (Real-time cache) – stores active drivers, current ride requests, matching state.
-- **API Endpoints**: POST /match/find-ride, POST /match/optimize, GET /match/status/:id.
-- **Communication**: Real-time data via Redis; REST API for match requests.
-- **External Calls**: Location Service (Google Maps) for route calculation and distance.
-- **Technology**: Python/FastAPI, Redis, Machine Learning (scikit-learn/TensorFlow), Geospatial algorithms.
-- **Advanced Features**: A* pathfinding, time-series prediction for demand, recommendation engine.
+- **Purpose**: AI-powered driver-passenger matching algorithm.
+- **Responsibility**: Match drivers with passengers, route optimization, pricing calculation, availability check.
+- **Cache**: Redis – real-time driver locations, active ride requests, matching queue.
+- **API Endpoints**: POST /match/find-ride, GET /match/status/:id, POST /match/optimize.
+- **Communication**: Real-time via Redis; REST for match requests. Consumes location updates from Ride Service.
+- **Why Separate**: Computationally intensive. Requires specialized algorithms. Benefits from horizontal scaling with Redis.
+- **External Calls**: Google Maps API for route calculation.
+- **Technology**: Python/FastAPI, Redis, ML (scikit-learn), geospatial algorithms.
 
 ### 5. Payment Service (Port 3005)
-- **Purpose**: Secure financial transaction processing and billing.
-- **Responsibility**: Payment processing, transaction logging, refund handling, wallet management, invoice generation, reconciliation.
-- **Database**: PostgreSQL (Payment DB) – PCI DSS compliant; stores transactions, payment records, billing history.
-- **API Endpoints**: POST /payments/process, GET /payments/:transactionId, POST /payments/:id/refund, GET /invoices/:id.
-- **Communication**: Synchronous REST (for immediate payment processing); asynchronous events for notifications.
-- **External Calls**: Payment Gateway (Stripe/PayPal) for actual fund transfers.
-- **Security**: End-to-end encryption, PCI DSS compliance, tokenization, fraud detection.
-- **Technology**: Node.js/Express, Stripe/PayPal SDK, encryption libraries.
+- **Purpose**: Secure financial transaction processing.
+- **Responsibility**: Process payments, handle refunds, wallet management, invoice generation, transaction logging.
+- **Database**: PostgreSQL (PCI DSS compliant) – transactions, payment records, billing history.
+- **API Endpoints**: POST /payments/process, GET /payments/:id, POST /payments/:id/refund, GET /invoices.
+- **Communication**: Synchronous REST for immediate payment; async events to message queue (payment_completed).
+- **Why Separate**: Requires strict security/compliance (PCI DSS). Failure must not affect other services. Critical for revenue.
+- **External Calls**: Stripe/PayPal for fund transfers.
+- **Technology**: Node.js/Express, Stripe SDK, encryption, fraud detection.
 
 ### 6. Notification Service (Port 3006)
-- **Purpose**: Multi-channel notification delivery (push, SMS, email).
-- **Responsibility**: Send push notifications, SMS alerts, emails; schedule notifications; track delivery status.
-- **Message Queue**: RabbitMQ – receives events from other services.
-- **API Endpoints**: POST /notifications/send, GET /notifications/status/:id, PUT /notifications/:id/resend.
-- **Communication**: Asynchronous via message queue (event-driven); REST API for direct notification requests.
-- **External Integrations**: Firebase Cloud Messaging (push), Twilio (SMS), SendGrid (email).
-- **Technology**: Node.js/Express, RabbitMQ, Firebase SDK, Twilio SDK, SendGrid SDK.
-- **Scalability**: Multiple worker instances consuming queue messages independently.
+- **Purpose**: Multi-channel notification delivery (push, SMS, email, in-app chat).
+- **Responsibility**: Send push notifications, SMS, emails, in-app messages; delivery tracking; message scheduling.
+- **Message Queue**: RabbitMQ – receives events from Ride, Payment, Rating services.
+- **API Endpoints**: POST /notifications/send, GET /notifications/status/:id.
+- **Communication**: Asynchronous via RabbitMQ; REST for direct requests. Multiple worker instances consume queue.
+- **Why Separate**: Decouples heavy I/O operations. Prevents notification failures from blocking core services.
+- **External Integrations**: Firebase (push), Twilio (SMS), SendGrid (email).
+- **Technology**: Node.js, RabbitMQ, Firebase SDK, Twilio, SendGrid.
 
-### 7. Chat Service (Port 3007)
-- **Purpose**: Real-time messaging between matched drivers and passengers.
-- **Responsibility**: Message storage, real-time delivery, chat history, message encryption, presence tracking.
-- **Database**: MongoDB (Chat DB) – stores unstructured message data, chat history, conversation metadata.
-- **Communication**: WebSocket for real-time bidirectional communication; REST for chat retrieval.
-- **API Endpoints**: WS /chat/connect, GET /chat/history/:conversationId, POST /chat/message, GET /chat/conversations.
-- **External Calls**: User Service for user validation; Auth Service for token verification.
-- **Security**: End-to-end encryption, message signing, rate limiting per user.
-- **Technology**: Node.js/Socket.io, MongoDB, Redis for presence/session state.
-
-### 8. Rating Service (Port 3008)
-- **Purpose**: Manages user ratings, reviews, and reputation scoring.
-- **Responsibility**: Rating submission, review moderation, fraud detection, reputation calculation, rating aggregation.
-- **Database**: PostgreSQL (Rating DB) – stores ratings, reviews, reputation scores, moderation flags.
+### 7. Rating Service (Port 3007)
+- **Purpose**: User ratings, reviews, and reputation management.
+- **Responsibility**: Accept ratings, moderation, fraud detection, reputation calculation, rating aggregation.
+- **Database**: PostgreSQL – ratings, reviews, reputation scores, moderation logs.
 - **API Endpoints**: POST /ratings, GET /ratings/:userId, PUT /ratings/:id, GET /reputation/:userId.
-- **Communication**: REST API; consumes events from Ride Service (trip completion).
-- **Moderation**: Sentiment analysis for spam detection; admin approval workflow.
-- **Technology**: Node.js/Express, PostgreSQL, NLP libraries (sentiment analysis).
+- **Communication**: REST API; consumes ride_completed events from message queue.
+- **Why Separate**: Community trust is crucial; scales independently. Moderation logic is distinct business domain.
+- **Technology**: Node.js/Express, PostgreSQL, NLP (sentiment analysis), moderation pipeline.
 
 ## Supporting Infrastructure
 
 ### API Gateway
-- **Purpose**: Single entry point for all client requests; request routing, authentication, rate limiting.
-- **Technology**: Kong/AWS API Gateway/NGINX.
-- **Responsibilities**: 
-  - Route requests to appropriate microservices.
-  - Enforce authentication (validate JWT tokens).
-  - Apply rate limiting per user/IP.
-  - Log all incoming requests.
+- Single entry point for all clients.
+- Routes requests to appropriate services.
+- Enforces authentication, rate limiting, logging.
+- Technology: Kong or NGINX.
 
-### Service Registry & Discovery
-- **Purpose**: Dynamic service discovery and load balancing.
-- **Technology**: Consul or Eureka.
-- **Responsibilities**:
-  - Services register themselves on startup.
-  - API Gateway discovers service endpoints dynamically.
-  - Health checks to detect failed services.
+### Service Registry (Consul)
+- Services register on startup.
+- Enables dynamic service discovery.
+- Health checks detect failed services.
 
-### Message Queue
-- **Purpose**: Asynchronous event-driven communication between services.
-- **Technology**: RabbitMQ or Apache Kafka.
-- **Use Cases**:
-  - Ride Service publishes "ride_created" event → Notification Service consumes and sends notification.
-  - Payment Service publishes "payment_completed" event → Rating Service and Analytics Service consume.
-  - Decouples services; improves resilience.
+### Message Queue (RabbitMQ)
+- Asynchronous event-driven communication.
+- Decouples services; improves resilience.
+- Example: Payment Service publishes payment_completed → Notification Service consumes and sends receipt.
 
-### Monitoring & Logging
-- **Purpose**: Centralized observability across all services.
-- **Technology**: Prometheus (metrics), ELK Stack (logs), Grafana (dashboards).
-- **Responsibilities**:
-  - Collect metrics from all microservices (response time, error rate, request volume).
-  - Centralized logging from all services.
-  - Alert on anomalies (e.g., high error rate, service latency).
+### Monitoring (Prometheus/ELK)
+- Centralized metrics and logs.
+- Alerts on anomalies (high error rate, latency).
+- Dashboards for system health.
 
-## Data Management Strategy
+## Key Architectural Decisions
 
 ### Database per Service Pattern
-- Each service owns its database; no direct cross-service database access.
+- Each service owns its database; no cross-database queries.
 - Ensures loose coupling and independent scaling.
-- Consistency maintained through event-driven architecture (eventual consistency).
+- Eventual consistency via event-driven architecture.
 
-### Caching Strategy
-- Redis for frequently accessed data (driver availability, ride requests).
-- Reduces database load; enables real-time updates for Matching Service.
+### Synchronous vs Asynchronous
+- **Synchronous (REST)**: Auth validation, immediate payment processing.
+- **Asynchronous (RabbitMQ)**: Notifications, analytics, non-critical updates.
 
-## Inter-Service Communication
-
-### Synchronous (REST)
-- Auth Service → User Service (fetch user details).
-- Payment Service → Stripe API (process payment).
-- Used for immediate responses; introduces latency coupling.
-
-### Asynchronous (Message Queue)
-- Ride Service → Notification Service (send booking confirmation).
-- Payment Service → Analytics Service (log transaction).
-- Decouples services; improves fault tolerance.
-
-### Real-time (WebSocket)
-- Chat Service uses WebSocket for real-time messaging.
-- Matching Service uses Redis Pub/Sub for live ride availability updates.
+### Real-time Data
+- Redis for Matching Service: fast driver availability checks.
+- Reduces latency from seconds to milliseconds.
 
 ## Advantages
-- **Independent Scaling**: Each service scales independently based on demand (e.g., Matching Service can scale during peak hours).
-- **Technology Flexibility**: Different services can use different languages/technologies (Matching Service in Python, others in Node.js).
-- **Fault Isolation**: Failure in one service doesn't cascade to others (e.g., if Chat Service is down, ride matching still works).
-- **Faster Deployment**: Teams can deploy individual services without affecting others.
-- **Easy Maintenance**: Smaller codebases per service; easier to understand and modify.
+- **Independent Scaling**: Each service scales based on its demand (Matching Service during peak, Payment Service during transactions).
+- **Technology Flexibility**: Matching Service uses Python; others use Node.js.
+- **Fault Isolation**: Chat outage won't affect ride matching.
+- **Fast Deployment**: Teams deploy individual services without coordination.
+- **Clear Ownership**: Each service has distinct business responsibility.
 
 ## Challenges
-- **Distributed System Complexity**: Debugging across multiple services is harder.
-- **Data Consistency**: Eventual consistency instead of strong ACID; requires careful design.
-- **Network Latency**: Inter-service calls introduce additional latency.
-- **Operational Overhead**: Requires sophisticated monitoring, logging, and deployment orchestration.
+- **Distributed System Complexity**: Debugging across services requires sophisticated tooling.
+- **Data Consistency**: Eventual consistency instead of ACID transactions.
+- **Network Latency**: Inter-service calls add overhead.
+- **Operational Overhead**: Requires Kubernetes, monitoring, CI/CD pipelines.
 
-## Deployment Strategy
-- **Containerization**: Docker containers for each service.
-- **Orchestration**: Kubernetes for container orchestration, scaling, and management.
-- **CI/CD Pipeline**: Automated testing and deployment for each service independently.
+## Deployment
+- Docker containers for each service.
+- Kubernetes for orchestration and auto-scaling.
+- Separate CI/CD pipelines per service.
